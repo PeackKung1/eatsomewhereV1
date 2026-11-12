@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ESP32 Lab 09B</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            margin: 0;
+
+            padding: 30px 20px;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef2f7,
+                    #dfe7f1
+                );
+
+            color: #263238;
+
+            min-height: 100vh;
+
+        }
+
+
+        /* =========================================
+           CONTAINER
+           ========================================= */
+
+        .container {
+
+            max-width: 1000px;
+
+            margin: auto;
+
+        }
+
+
+        /* =========================================
+           HEADER
+           ========================================= */
+
+        .header {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #263238,
+                    #37474f
+                );
+
+            color: white;
+
+            padding: 32px;
+
+            margin-bottom: 25px;
+
+            border-radius: 20px;
+
+            text-align: center;
+
+            box-shadow:
+                0 10px 30px
+                rgba(0,0,0,0.18);
+
+        }
+
+
+        .header h1 {
+
+            margin: 0;
+
+            font-size: 34px;
+
+            letter-spacing: 1px;
+
+        }
+
+
+        .header p {
+
+            margin: 10px 0 20px;
+
+            color: #cfd8dc;
+
+            font-size: 15px;
+
+        }
+
+
+        /* =========================================
+           CONNECTION STATUS
+           ========================================= */
+
+        #connection {
+
+            display: inline-block;
+
+            padding: 8px 18px;
+
+            border-radius: 30px;
+
+            background: rgba(255,255,255,0.12);
+
+            border: 1px solid
+                rgba(255,255,255,0.2);
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+        }
+
+
+        /* =========================================
+           GRID
+           ========================================= */
+
+        .dashboard-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 20px;
+
+        }
+
+
+        /* =========================================
+           CARD
+           ========================================= */
+
+        .card {
+
+            background: white;
+
+            padding: 24px;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 6px 20px
+                rgba(0,0,0,0.08);
+
+            transition:
+                transform 0.2s,
+                box-shadow 0.2s;
+
+        }
+
+
+        .card:hover {
+
+            transform:
+                translateY(-4px);
+
+            box-shadow:
+                0 12px 28px
+                rgba(0,0,0,0.13);
+
+        }
+
+
+        .card h2 {
+
+            margin: 0 0 18px;
+
+            font-size: 20px;
+
+            color: #263238;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+        }
+
+
+        .card-icon {
+
+            width: 38px;
+
+            height: 38px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background: #eceff1;
+
+            font-size: 20px;
+
+        }
+
+
+        /* =========================================
+           ROW
+           ========================================= */
+
+        .row {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+
+            padding: 14px 0;
+
+            border-bottom:
+                1px solid #eceff1;
+
+        }
+
+
+        .row:last-child {
+
+            border-bottom: none;
+
+            padding-bottom: 0;
+
+        }
+
+
+        .label {
+
+            color: #607d8b;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+        }
+
+
+        .value {
+
+            font-family: monospace;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            color: #263238;
+
+        }
+
+
+        /* =========================================
+           STATUS
+           ========================================= */
+
+        .status {
+
+            padding:
+                5px 12px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+        }
+
+
+        /* =========================================
+           FULL WIDTH SYSTEM CARD
+           ========================================= */
+
+        .full-width {
+
+            grid-column: 1 / -1;
+
+        }
+
+
+        /* =========================================
+           FOOTER
+           ========================================= */
+
+        .footer {
+
+            text-align: center;
+
+            color: #78909c;
+
+            font-size: 13px;
+
+            margin-top: 25px;
+
+            line-height: 1.8;
+
+        }
+
+
+        /* =========================================
+           RESPONSIVE
+           ========================================= */
+
+        @media (max-width: 700px) {
+
+            body {
+
+                padding: 15px;
+
+            }
+
+            .dashboard-grid {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            .full-width {
+
+                grid-column: auto;
+
+            }
+
+            .header h1 {
+
+                font-size: 27px;
+
+            }
+
+            .card {
+
+                padding: 20px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- =========================================
+         HEADER
+         ========================================= -->
+
+    <div class="header">
+
+        <h1>
+            ESP32 Lab 09B
+        </h1>
+
+        <p>
+            Wi-Fi Access Point & Embedded Web Server
+        </p>
+
+        <div id="connection">
+            Connecting...
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         DASHBOARD GRID
+         ========================================= -->
+
+    <div class="dashboard-grid">
+
+
+        <!-- =====================================
+             ADC / POT
+             ===================================== -->
+
+        <div class="card">
+
+            <h2>
+
+                <span class="card-icon">
+                    🎚️
+                </span>
+
+                ADC / POT
+
+            </h2>
+
+
+            <div class="row">
+
+                <span class="label">
+                    ADC Value
+                </span>
+
+                <span
+                    class="value"
+                    id="adc">
+
+                    ---
+
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    POT Voltage
+                </span>
+
+                <span
+                    class="value"
+                    id="potVoltage">
+
+                    ---
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================
+             PWM / LED
+             ===================================== -->
+
+        <div class="card">
+
+            <h2>
+
+                <span class="card-icon">
+                    💡
+                </span>
+
+                PWM / LED
+
+            </h2>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Saved PWM
+                </span>
+
+                <span
+                    class="value"
+                    id="pwm">
+
+                    ---
+
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    PWM Voltage
+                </span>
+
+                <span
+                    class="value"
+                    id="pwmVoltage">
+
+                    ---
+
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    LED
+                </span>
+
+                <span
+                    class="value status"
+                    id="led">
+
+                    ---
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================
+             LOGGING
+             ===================================== -->
+
+        <div class="card">
+
+            <h2>
+
+                <span class="card-icon">
+                    📊
+                </span>
+
+                Logging
+
+            </h2>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Logging
+                </span>
+
+                <span
+                    class="value status"
+                    id="logging">
+
+                    ---
+
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Log Count
+                </span>
+
+                <span
+                    class="value"
+                    id="logCount">
+
+                    ---
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================
+             SYSTEM INFORMATION
+             ===================================== -->
+
+        <div class="card">
+
+            <h2>
+
+                <span class="card-icon">
+                    ⚙️
+                </span>
+
+                System Information
+
+            </h2>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Uptime
+                </span>
+
+                <span
+                    class="value"
+                    id="uptime">
+
+                    ---
+
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    AP SSID
+                </span>
+
+                <span
+                    class="value"
+                    id="ssid">
+
+                    ---
+
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    AP IP
+                </span>
+
+                <span
+                    class="value"
+                    id="ip">
+
+                    ---
+
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Connected Clients
+                </span>
+
+                <span
+                    class="value"
+                    id="clients">
+
+                    ---
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================================
+         FOOTER
+         ========================================= -->
+
+    <div class="footer">
+
+        ESP32 Embedded Web Server
+
+        <br>
+
+        Dashboard updates every 1 second
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================================
+     JAVASCRIPT
+     ========================================= -->
+
+<script>
+
+
+// =============================================
+// UPDATE STATUS
+// =============================================
+
+async function updateStatus()
+{
+
+    try
+    {
+
+        // -------------------------------------
+        // Request data from ESP32
+        // -------------------------------------
+
+        const response =
+            await fetch(
+                "/api/status"
+            );
+
+
+        // -------------------------------------
+        // Check HTTP status
+        // -------------------------------------
+
+        if (!response.ok)
+        {
+
+            throw new Error(
+                "HTTP Error " +
+                response.status
+            );
+
+        }
+
+
+        // -------------------------------------
+        // Convert response to JSON
+        // -------------------------------------
+
+        const data =
+            await response.json();
+
+
+        // =====================================
+        // ADC
+        // =====================================
+
+        document.getElementById(
+            "adc"
+        ).textContent =
+            data.adc;
+
+
+        // =====================================
+        // POT VOLTAGE
+        // =====================================
+
+        document.getElementById(
+            "potVoltage"
+        ).textContent =
+            Number(data.potVoltage)
+                .toFixed(3)
+            + " V";
+
+
+        // =====================================
+        // PWM
+        // =====================================
+
+        document.getElementById(
+            "pwm"
+        ).textContent =
+            data.pwm;
+
+
+        // =====================================
+        // PWM VOLTAGE
+        // =====================================
+
+        document.getElementById(
+            "pwmVoltage"
+        ).textContent =
+            Number(data.pwmVoltage)
+                .toFixed(3)
+            + " V";
+
+
+        // =====================================
+        // LED
+        // =====================================
+
+        const led =
+            document.getElementById("led");
+
+
+        led.textContent =
+            data.led
+                ? "ON"
+                : "OFF";
+
+
+        led.style.background =
+            data.led
+                ? "#e8f5e9"
+                : "#eceff1";
+
+        led.style.color =
+            data.led
+                ? "#2e7d32"
+                : "#607d8b";
+
+
+        // =====================================
+        // LOGGING
+        // =====================================
+
+        const logging =
+            document.getElementById(
+                "logging"
+            );
+
+
+        logging.textContent =
+            data.logging
+                ? "ON"
+                : "OFF";
+
+
+        logging.style.background =
+            data.logging
+                ? "#e3f2fd"
+                : "#eceff1";
+
+        logging.style.color =
+            data.logging
+                ? "#1565c0"
+                : "#607d8b";
+
+
+        // =====================================
+        // LOG COUNT
+        // =====================================
+
+        document.getElementById(
+            "logCount"
+        ).textContent =
+            data.logCount;
+
+
+        // =====================================
+        // UPTIME
+        // =====================================
+
+        document.getElementById(
+            "uptime"
+        ).textContent =
+            data.uptime;
+
+
+        // =====================================
+        // SSID
+        // =====================================
+
+        document.getElementById(
+            "ssid"
+        ).textContent =
+            data.ssid;
+
+
+        // =====================================
+        // IP
+        // =====================================
+
+        document.getElementById(
+            "ip"
+        ).textContent =
+            data.ip;
+
+
+        // =====================================
+        // CLIENTS
+        // =====================================
+
+        document.getElementById(
+            "clients"
+        ).textContent =
+            data.clients;
+
+
+        // =====================================
+        // CONNECTION STATUS
+        // =====================================
+
+        const connection =
+            document.getElementById(
+                "connection"
+            );
+
+
+        connection.textContent =
+            "● Connected to ESP32";
+
+        connection.style.color =
+            "#a5d6a7";
+
+    }
+
+
+    catch (error)
+    {
+
+        console.log(
+            "API Error:",
+            error
+        );
+
+
+        // -------------------------------------
+        // Show disconnected status
+        // -------------------------------------
+
+        const connection =
+            document.getElementById(
+                "connection"
+            );
+
+
+        connection.textContent =
+            "● Cannot connect to ESP32";
+
+        connection.style.color =
+            "#ef9a9a";
+
+    }
+
+}
+
+
+// =============================================
+// FIRST UPDATE
+// =============================================
+
+updateStatus();
+
+
+// =============================================
+// UPDATE EVERY 1 SECOND
+// =============================================
+
+setInterval(
+    updateStatus,
+    1000
+);
+
+
+</script>
+
+
+</body>
+
+</html>
