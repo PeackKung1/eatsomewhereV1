@@ -2,7 +2,27 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "status.schema.json",
   "title": "status",
+  "description": "tesa/<TEAM>/status/<device_id> — ทุก client (LWT = offline)",
   "type": "object",
-  "properties": {},
-  "required": []
+  "properties": {
+    "device_id": {
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "online",
+        "offline"
+      ]
+    },
+    "ts": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000000000,
+      "description": "Unix วินาที (ไม่ใช่มิลลิวินาที)"
+    }
+  },
+  "required": [
+    "device_id",
+    "state"
+  ]
 }

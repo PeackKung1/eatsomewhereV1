@@ -1,20 +1,37 @@
-# MQTT topics shared by every component.
-# Agree on topics here before wiring components together.
+# MQTT topics ที่ทีมตกลงแล้ว (ต้นฉบับโค้ด: services/mqtt/common.py)
+# prefix: tesa/<TEAM>   (TEAM ตั้งที่ TESA_TEAM, ตอนนี้ kucoffee26)
+# client ID: <TEAM>-<device_id> ห้ามซ้ำ
+# กติกา: ts = Unix วินาที, ชื่อคลาสตัวเล็กครบ 7 ตัว, defect_ratio = (total - good) / total (0–1),
+#        ค่าที่ไม่มีไม่ส่ง key (ห้าม null), Service Layer ข้าม moisture ที่มาแบบ retained
+prefix: tesa/{TEAM}
+classes: [good, shell, full_black, hull_husk, broken, parchment, immature]
 topics:
   moisture:
     topic: esp32/moisture
     publisher: firmware/esp32
+    qos: 0
+    retained: true
     schema: schemas/moisture.schema.json
-  moisture_status:
-    topic: esp32/moisture/status
-    publisher: firmware/esp32
-    schema: schemas/status.schema.json
-    retained: true   # LWT: "offline"
   beans:
-    topic: TODO
-    publisher: vision
+    topic: pi/beans
+    publisher: vision (1 ข้อความ/ภาพ)
+    qos: 1
+    retained: false
     schema: schemas/beans.schema.json
   lot:
-    topic: TODO
-    publisher: services/mqtt
+    topic: service/lot
+    publisher: services/mqtt/service_layer.py
+    qos: 1
+    retained: true
     schema: schemas/lot.schema.json
+  cmd:
+    topic: service/cmd
+    publisher: tools/tools.py   # {"cmd": "new_lot"}
+    qos: 1
+    retained: false
+  status:
+    topic: status/{device_id}
+    publisher: ทุก client (LWT)
+    qos: 1
+    retained: true
+    schema: schemas/status.schema.json

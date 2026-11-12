@@ -2,7 +2,85 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "beans.schema.json",
   "title": "beans",
+  "description": "tesa/<TEAM>/pi/beans — Pi, 1 ข้อความ/ภาพ",
   "type": "object",
-  "properties": {},
-  "required": []
+  "properties": {
+    "device_id": {
+      "type": "string"
+    },
+    "ts": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000000000,
+      "description": "Unix วินาที (ไม่ใช่มิลลิวินาที)"
+    },
+    "image_id": {
+      "type": "string"
+    },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "good": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "shell": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "full_black": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "hull_husk": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "broken": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parchment": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "immature": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "good",
+        "shell",
+        "full_black",
+        "hull_husk",
+        "broken",
+        "parchment",
+        "immature"
+      ],
+      "additionalProperties": false
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "defect_ratio": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "(total - good) / total"
+    },
+    "infer_ms": {
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "device_id",
+    "ts",
+    "image_id",
+    "counts",
+    "total",
+    "defect_ratio"
+  ]
 }

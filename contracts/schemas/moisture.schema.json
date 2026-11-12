@@ -2,7 +2,32 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "moisture.schema.json",
   "title": "moisture",
+  "description": "tesa/<TEAM>/esp32/moisture — ESP32",
   "type": "object",
-  "properties": {},
-  "required": []
+  "properties": {
+    "device_id": {
+      "type": "string"
+    },
+    "ts": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000000000,
+      "description": "Unix วินาที (ไม่ใช่มิลลิวินาที)"
+    },
+    "moisture_pct": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "raw_adc": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4095
+    }
+  },
+  "required": [
+    "device_id",
+    "ts",
+    "moisture_pct"
+  ]
 }

@@ -2,7 +2,87 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "lot.schema.json",
   "title": "lot",
+  "description": "tesa/<TEAM>/service/lot — Service Layer; ค่าที่ยังไม่มีไม่ส่ง key",
   "type": "object",
-  "properties": {},
-  "required": []
+  "properties": {
+    "lot_id": {
+      "type": "string"
+    },
+    "ts": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000000000,
+      "description": "Unix วินาที (ไม่ใช่มิลลิวินาที)"
+    },
+    "moisture_pct": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "moisture_samples": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "image_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "good": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "shell": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "full_black": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "hull_husk": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "broken": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parchment": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "immature": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "good",
+        "shell",
+        "full_black",
+        "hull_husk",
+        "broken",
+        "parchment",
+        "immature"
+      ],
+      "additionalProperties": false
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "defect_ratio": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "(total - good) / total"
+    }
+  },
+  "required": [
+    "lot_id",
+    "ts"
+  ]
 }

@@ -20,3 +20,6 @@ vision/training/data/
 
 # OS / editor
 .DS_Store
+
+# Agent decision logs
+agent/logs/
