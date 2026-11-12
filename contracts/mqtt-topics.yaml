@@ -1,0 +1,20 @@
+# MQTT topics shared by every component.
+# Agree on topics here before wiring components together.
+topics:
+  moisture:
+    topic: esp32/moisture
+    publisher: firmware/esp32
+    schema: schemas/moisture.schema.json
+  moisture_status:
+    topic: esp32/moisture/status
+    publisher: firmware/esp32
+    schema: schemas/status.schema.json
+    retained: true   # LWT: "offline"
+  beans:
+    topic: TODO
+    publisher: vision
+    schema: schemas/beans.schema.json
+  lot:
+    topic: TODO
+    publisher: services/mqtt
+    schema: schemas/lot.schema.json
